@@ -57,7 +57,7 @@ namespace GeoMemories
             return await db.Table<MapPin>().ToListAsync();
         }
 
-        public async Task<List<Picture>> GetAllPictures()
+        public async Task<List<Picture>> GetAllPicturesAsync()
         {
             return await db.Table<Picture>().ToListAsync();
         }

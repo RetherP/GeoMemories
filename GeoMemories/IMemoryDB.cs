@@ -18,7 +18,7 @@ namespace GeoMemories
         //Picture CRUD methods
         Task<Picture> GetPictureByIdAsync(int id);
         Task DeletePictureByIdAsync(int id);
-        Task<List<Picture>> GetAllPictures();
+        Task<List<Picture>> GetAllPicturesAsync();
         Task UpdatePictureAsync(Picture picture);
         Task CreatePictureAsync(Picture picture);
 
