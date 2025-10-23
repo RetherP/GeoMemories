@@ -1,20 +1,25 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SQLite;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GeoMemories
 {
-    public class MapPin
+    public partial class MapPin : ObservableObject
     {
-        [PrimaryKey,AutoIncrement]
-        public int ID { get; set; }
-
-        [ForeignKey(nameof(Trip.ID))]
-        public int TripID { get; set; }
-
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-
-        public string Title { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: PrimaryKey]
+        [property: AutoIncrement]
+        int iD;
+        [ObservableProperty]
+        [property: ForeignKey(nameof(Trip.ID))]
+        int tripID;
+        [ObservableProperty]
+        double latitude;
+        [ObservableProperty]
+        double longitude;
+        [ObservableProperty]
+        string title;
+        [ObservableProperty]
+        string address;
     }
 }

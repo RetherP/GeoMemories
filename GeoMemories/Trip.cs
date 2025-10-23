@@ -8,13 +8,19 @@ using System.Threading.Tasks;
 
 namespace GeoMemories
 {
-    public class Trip
+    public partial class Trip:ObservableObject
     {
-        [PrimaryKey,AutoIncrement]
-        public int ID { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public DateTime StartDate {  get; set; }
-        public DateTime EndDate { get; set; }
+        [ObservableProperty]
+        [property: PrimaryKey]
+        [property: AutoIncrement]
+        int iD;
+        [ObservableProperty]
+        string name;
+        [ObservableProperty]
+        string description;
+        [ObservableProperty]
+        DateTime startDate;
+        [ObservableProperty]
+        DateTime endDate;
     }
 }
