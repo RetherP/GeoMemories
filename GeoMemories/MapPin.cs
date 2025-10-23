@@ -5,7 +5,7 @@ namespace GeoMemories
 {
     public class MapPin
     {
-        [PrimaryKey]
+        [PrimaryKey,AutoIncrement]
         public int ID { get; set; }
 
         [ForeignKey(nameof(Trip.ID))]

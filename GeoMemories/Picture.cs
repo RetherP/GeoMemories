@@ -10,7 +10,7 @@ namespace GeoMemories
 {
     public class Picture
     {
-        [PrimaryKey]
+        [PrimaryKey,AutoIncrement]
         public int ID { get; set; }
         [ForeignKey(nameof(Trip.ID))]
         public int TripID { get; set; }
