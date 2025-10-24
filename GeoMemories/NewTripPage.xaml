@@ -2,11 +2,21 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GeoMemories.NewTripPage"
-             Title="NewTripPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="New Trip"
+             xmlns:local="clr-namespace:GeoMemories"
+             x:DataType="local:NewTripViewModel">
+    <ScrollView>
+        <VerticalStackLayout>
+            <Entry Placeholder="Enter the name of the new trip" Text="{Binding NewTrip.Name}"/>
+            <Entry Placeholder="Enter the description of the new trip" Text="{Binding NewTrip.Description}"/>
+            <HorizontalStackLayout>
+                <Label Text="Enter the start date of your trip"/>
+                <DatePicker Date="{Binding NewTrip.StartDate}"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout>
+                <Label Text="Enter the end date of your trip"/>
+                <DatePicker Date="{Binding NewTrip.EndDate}"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

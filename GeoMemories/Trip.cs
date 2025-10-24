@@ -17,7 +17,7 @@ namespace GeoMemories
         [ObservableProperty]
         string name;
         [ObservableProperty]
-        string description;
+        string? description;
         [ObservableProperty]
         DateTime startDate;
         [ObservableProperty]

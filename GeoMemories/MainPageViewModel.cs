@@ -144,5 +144,10 @@ namespace GeoMemories
             Pictures.Clear();
             picList.ForEach(x => Pictures.Add(x));
         }
+        [RelayCommand]
+        public async Task DetailTrip()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
