@@ -21,5 +21,9 @@ namespace GeoMemories
         [ObservableProperty]
         string filePath;
         
+        public Picture GetCopy()
+        {
+            return (Picture)this.MemberwiseClone();
+        }
     }
 }

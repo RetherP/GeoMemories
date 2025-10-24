@@ -22,5 +22,10 @@ namespace GeoMemories
         DateTime startDate;
         [ObservableProperty]
         DateTime endDate;
+
+        public Trip GetCopy()
+        {
+            return (Trip)this.MemberwiseClone();
+        }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,14 +22,14 @@ namespace GeoMemories
         public ObservableCollection<MapPin> MapPins { get; set; }
         public ObservableCollection<Picture> Pictures { get; set; }
 
-        private List<MapPin> addedPins = new List<MapPin>();
-        private List<Picture> addedPics = new List<Picture>();
+        ObservableCollection<MapPin> addedPins = new ObservableCollection<MapPin>();
+        ObservableCollection<Picture> addedPics = new ObservableCollection<Picture>();
 
         [ObservableProperty]
-        private Trip selectedTrip;
+        Trip selectedTrip;
 
         [ObservableProperty]
-        private Trip editedTrip;
+        Trip editedTrip;
         async partial void OnEditedTripChanged(Trip value)
         {
             if(value != null && addedPins.Count != 0 && addedPics.Count != 0)
@@ -66,6 +69,61 @@ namespace GeoMemories
                     await db.CreatePictureAsync(item);
                 }
             }
+        }
+        [RelayCommand]
+        public async Task DeleteTrip()
+        {
+            if(SelectedTrip != null)
+            {
+                Trips.Remove(SelectedTrip);
+                await db.DeleteTripAsync(SelectedTrip.ID);
+                foreach (var item in MapPins)
+                {
+                    if(item.ID == SelectedTrip.ID) 
+                    { 
+                        MapPins.Remove(item);
+                        await db.DeleteMapPinAsync(item.ID);
+                    }
+                }
+                foreach (var item in Pictures)
+                {
+                    if (item.ID == SelectedTrip.ID)
+                    {
+                        Pictures.Remove(item);
+                        await db.DeletePictureByIdAsync(item.ID);
+                    }
+                }
+            }
+            else
+            {
+                WeakReferenceMessenger.Default.Send("Please Select a trip to delete");
+            }
+        }
+        [RelayCommand]
+        public async Task EditTrip()
+        {
+            if(SelectedTrip != null)
+            {
+                var param = new ShellNavigationQueryParameters
+                {
+                    {"EditedTrip",SelectedTrip },
+                    {"MapPins", MapPins},
+                    {"Pictures",Pictures }
+                };
+                await Shell.Current.GoToAsync("edittrip", param);
+                SelectedTrip = null;
+            }
+        }
+        [RelayCommand]
+        public async Task NewTrip()
+        {
+            var param = new ShellNavigationQueryParameters
+            {
+                {"NewTrip",new Trip()},
+                {"MapPins",new ObservableCollection<MapPin> { }},
+                { "Pictures", new ObservableCollection<Picture> { }},
+            };
+            await Shell.Current.GoToAsync("newtrip", param);
         }
         public MainPageViewModel(IMemoryDB db)
         {

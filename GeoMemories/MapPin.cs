@@ -21,5 +21,10 @@ namespace GeoMemories
         string title;
         [ObservableProperty]
         string address;
+
+        public MapPin GetCopy()
+        {
+            return (MapPin)this.MemberwiseClone();
+        }
     }
 }
