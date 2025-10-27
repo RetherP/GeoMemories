@@ -19,8 +19,8 @@ namespace GeoMemories
         [ObservableProperty]
         Trip draft;
 
-        ObservableCollection<MapPin> MapPins;
-        ObservableCollection<Picture> Pictures;
+        public ObservableCollection<MapPin> MapPins { get; set; }
+        public ObservableCollection<Picture> Pictures { get; set; }
 
         ObservableCollection<MapPin> MapPinsDraft;
         ObservableCollection<Picture> PicturesDraft;

@@ -4,7 +4,9 @@
              x:Class="GeoMemories.NewTripPage"
              Title="New Trip"
              xmlns:local="clr-namespace:GeoMemories"
-             x:DataType="local:NewTripViewModel">
+             x:DataType="local:NewTripViewModel"
+             xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui">
+
     <ScrollView>
         <VerticalStackLayout>
             <Entry Placeholder="Enter the name of the new trip" Text="{Binding NewTrip.Name}"/>
@@ -17,6 +19,13 @@
                 <Label Text="Enter the end date of your trip"/>
                 <DatePicker Date="{Binding NewTrip.EndDate}"/>
             </HorizontalStackLayout>
+            <mapsui:MapControl x:Name="myMap"
+                               WidthRequest="500"
+                               HeightRequest="300"/>
+            <Entry Text="{Binding Address.City}" Placeholder="Írja ide a várost, például: Budapest"/>
+            <Entry Text="{Binding Address.Country}" Placeholder="Írja ide a várost, például: Nigéria"/>
+            <Entry Text="{Binding Address.Street}" Placeholder="Írja ide az utca házszámot például:Pacsírta utca 176"/>
+            <Button Command="{Binding PlacePinCommand}" Text="Pin elhelyezése"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

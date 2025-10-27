@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls;
+using SkiaSharp.Views.Maui.Controls.Hosting;
+
 
 namespace GeoMemories
 {
@@ -9,6 +12,7 @@ namespace GeoMemories
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseSkiaSharp(true)
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -18,6 +22,8 @@ namespace GeoMemories
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddTransient<EditTripViewModel>();
             builder.Services.AddTransient<EditTripPage>();
+            builder.Services.AddTransient<NewTripViewModel>();
+            builder.Services.AddTransient<NewTripPage>();
             builder.Services.AddSingleton<IMemoryDB, MemoryDB>();
 
 #if DEBUG

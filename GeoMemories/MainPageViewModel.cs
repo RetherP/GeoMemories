@@ -120,8 +120,8 @@ namespace GeoMemories
             var param = new ShellNavigationQueryParameters
             {
                 {"NewTrip",new Trip()},
-                {"MapPins",new ObservableCollection<MapPin> { }},
-                { "Pictures", new ObservableCollection<Picture> { }},
+                {"MapPins",new ObservableCollection<MapPin>()},
+                { "Pictures", new ObservableCollection<Picture>()},
             };
             await Shell.Current.GoToAsync("newtrip", param);
         }
