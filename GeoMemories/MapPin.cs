@@ -18,7 +18,7 @@ namespace GeoMemories
         [ObservableProperty]
         double longitude;
         [ObservableProperty]
-        string title;
+        string addressString;
 
         public MapPin GetCopy()
         {

@@ -12,7 +12,6 @@ namespace GeoMemories
     {
         [ObservableProperty]
         [property: PrimaryKey]
-        [property: AutoIncrement]
         int iD;
         [ObservableProperty]
         string name;

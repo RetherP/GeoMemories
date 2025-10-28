@@ -36,19 +36,22 @@ namespace GeoMemories
 
         public async Task DeleteMapPinAsync(int id)
         {
-            var ToRemove = db.Table<MapPin>().Where(x => x.ID == id);
+            var list = await db.Table<MapPin>().ToListAsync();
+            var ToRemove = list.FirstOrDefault(x => x.ID == id);
             await db.DeleteAsync(ToRemove);
         }
 
         public async Task DeletePictureByIdAsync(int id)
         {
-            var ToRemove = db.Table<Picture>().Where(x => x.ID == id);
+            var list = await db.Table<Picture>().ToListAsync();
+            var ToRemove = list.FirstOrDefault(x => x.ID == id);
             await db.DeleteAsync(ToRemove);
         }
 
         public async Task DeleteTripAsync(int id)
         {
-            var ToRemove = db.Table<Trip>().Where(x => x.ID == id);
+            var list = await db.Table<Trip>().ToListAsync();
+            var ToRemove = list.FirstOrDefault(x => x.ID == id);
             await db.DeleteAsync(ToRemove);
         }
 

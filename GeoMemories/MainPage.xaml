@@ -6,23 +6,21 @@
              x:DataType="local:MainPageViewModel">
 
     <ScrollView>
-        <VerticalStackLayout>
-            <CollectionView ItemsSource="{Binding Trips}" SelectionMode="Single">
+        <VerticalStackLayout WidthRequest="200">
+            <CollectionView ItemsSource="{Binding Trips}" SelectionMode="Single" SelectedItem="{Binding SelectedTrip}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:Trip">
                         <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
                             <Label Grid.Row="0" Text="{Binding Name}"/>
-                            <Label Grid.Row="1" Grid.Column="0" Text="{Binding StartDate}"/>
-                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding EndDate}"/>
+                            <Label Grid.Row="1" Grid.Column="0" Text="{Binding StartDate, StringFormat='{0:yyyy/MM/dd}'}"/>
+                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding EndDate,StringFormat='{0:yyyy/MM/dd}'}"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <VerticalStackLayout WidthRequest="200" >
-                <Button Text="New Trip" Command="{Binding NewTripCommand}" Margin="10"/>
-                <Button Text="Edit Trip" Command="{Binding EditTripCommand}" Margin="10"/>
-                <Button Text="Details" Command="{Binding DeleteTripCommand}" Margin="10"/>
-            </VerticalStackLayout>
+            <Button Text="New Trip" Command="{Binding NewTripCommand}" Margin="10"/>
+            <Button Text="Edit Trip" Command="{Binding EditTripCommand}" Margin="10"/>
+            <Button Text="Delete" Command="{Binding DeleteTripCommand}" Margin="10"/>
         </VerticalStackLayout>
     </ScrollView>
 

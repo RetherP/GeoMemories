@@ -20,10 +20,10 @@ namespace GeoMemories
                 });
             builder.Services.AddSingleton<MainPageViewModel>();
             builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddTransient<EditTripViewModel>();
-            builder.Services.AddTransient<EditTripPage>();
             builder.Services.AddTransient<NewTripViewModel>();
             builder.Services.AddTransient<NewTripPage>();
+            builder.Services.AddTransient<EditTripViewModel>();
+            builder.Services.AddTransient<EditTripPage>();
             builder.Services.AddSingleton<IMemoryDB, MemoryDB>();
 
 #if DEBUG

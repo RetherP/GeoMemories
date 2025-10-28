@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Mapsui;
+using Mapsui.Projections;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +17,12 @@ namespace GeoMemories
     [QueryProperty(nameof(Pictures), "Pictures")]
     public partial class EditTripViewModel : ObservableObject
     {
+        //TODO:
+        /*
+         * Finish the UI, and all the necessary save commands
+         * Add pin delete methodology --> DeletePin func finish
+         * Add image handling
+         */
         [ObservableProperty]
         Trip editedTrip;
         [ObservableProperty]
@@ -22,16 +31,32 @@ namespace GeoMemories
         public ObservableCollection<MapPin> MapPins { get; set; }
         public ObservableCollection<Picture> Pictures { get; set; }
 
-        ObservableCollection<MapPin> MapPinsDraft;
-        ObservableCollection<Picture> PicturesDraft;
-
+        public ObservableCollection<MapPin> MapPinsDraft { get; set; }
+        public ObservableCollection<Picture> PicturesDraft { get; set; }
+        
+        
         public void Init()
         {
             Draft = editedTrip.GetCopy();
-            MapPinsDraft = new ObservableCollection<MapPin>(MapPins.Where(x => x.ID == EditedTrip.ID).Select(x => x.GetCopy()));
-            PicturesDraft =  new ObservableCollection<Picture>(PicturesDraft.Where(x => x.ID == EditedTrip.ID).Select(x => x.GetCopy()));
+            MapPinsDraft = new ObservableCollection<MapPin>();
+            foreach (var item in MapPins)
+            {
+                if (item.TripID == EditedTrip.ID)
+                    MapPinsDraft.Add(item.GetCopy());
+            }
+            PicturesDraft =  new ObservableCollection<Picture>();
+            foreach (var item in Pictures)
+            {
+                if (item.TripID == EditedTrip.ID)
+                    PicturesDraft.Add(item.GetCopy());
+            }
         }
-
+        private Mapsui.Map map;
+        public Mapsui.Map Map
+        {
+            get => map;
+            set => SetProperty(ref map, value);
+        }
         [RelayCommand]
         public async Task Save()
         {
@@ -39,7 +64,7 @@ namespace GeoMemories
             {
                 {"EditedTip", Draft},
                 {"addedpics", PicturesDraft},
-                {"addedpins",MapPinsDraft}
+                {"addedpins", MapPinsDraft}
             };
             await Shell.Current.GoToAsync("..", param);
         }
@@ -47,6 +72,18 @@ namespace GeoMemories
         public async Task CancelEdit()
         {
             await Shell.Current.GoToAsync("..");
+        }
+        [RelayCommand]
+        public void DeletePin(MapPin pin)
+        {
+            MapPinsDraft.Remove(pin);
+        }
+        public EditTripViewModel()
+        {
+            Map = new Mapsui.Map();
+            Map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer());
+            var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
+            Map.Home = n => n.CenterOnAndZoomTo(new MPoint(center.x, center.y), resolution: 2000, 500, Mapsui.Animations.Easing.CubicOut);
         }
     }
 }

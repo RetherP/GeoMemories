@@ -15,9 +15,10 @@ namespace GeoMemories
                 r.DisplayAlert("Alert", m, "OK");
             });
         }
-        private async void MainPage_OnLoaded(object? sender, EventArgs e)
+        protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {
             await viewModel.InitAsync();
+            base.OnNavigatedTo(args);
         }
     }
 }
