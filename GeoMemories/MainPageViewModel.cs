@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GeoMemories
 {
-    [QueryProperty(nameof(EditedTrip),"EditedTrip")]
+    [QueryProperty(nameof(EditedTrip), "EditedTip")]
     [QueryProperty(nameof(addedPics),"addedpics")]
     [QueryProperty(nameof(addedPins),"addedpins")]
     public partial class MainPageViewModel:ObservableObject
@@ -32,7 +32,7 @@ namespace GeoMemories
         Trip editedTrip;
         async partial void OnEditedTripChanged(Trip value)
         {
-            if(value != null && addedPins.Count != 0 && addedPics.Count != 0)
+            if(value != null)
             {
                 if(SelectedTrip != null)
                 {
@@ -119,7 +119,7 @@ namespace GeoMemories
         {
             var param = new ShellNavigationQueryParameters
             {
-                {"NewTrip",new Trip()},
+                {"NewTrip",new Trip() { StartDate = DateTime.Now, EndDate=DateTime.Now} },
                 {"MapPins",new ObservableCollection<MapPin>()},
                 { "Pictures", new ObservableCollection<Picture>()},
             };

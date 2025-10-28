@@ -8,7 +8,7 @@
              xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui">
 
     <ScrollView>
-        <VerticalStackLayout>
+        <VerticalStackLayout WidthRequest="400" Spacing="20">
             <Entry Placeholder="Enter the name of the new trip" Text="{Binding NewTrip.Name}"/>
             <Entry Placeholder="Enter the description of the new trip" Text="{Binding NewTrip.Description}"/>
             <HorizontalStackLayout>
@@ -20,12 +20,15 @@
                 <DatePicker Date="{Binding NewTrip.EndDate}"/>
             </HorizontalStackLayout>
             <mapsui:MapControl x:Name="myMap"
-                               WidthRequest="500"
-                               HeightRequest="300"/>
+                               WidthRequest="400"
+                               HeightRequest="200"/>
             <Entry Text="{Binding Address.City}" Placeholder="Írja ide a várost, például: Budapest"/>
             <Entry Text="{Binding Address.Country}" Placeholder="Írja ide a várost, például: Nigéria"/>
             <Entry Text="{Binding Address.Street}" Placeholder="Írja ide az utca házszámot például:Pacsírta utca 176"/>
-            <Button Command="{Binding PlacePinCommand}" Text="Pin elhelyezése"/>
+            
+            <Button Command="{Binding PlacePinCommand}" Text="Pin elhelyezése" WidthRequest="150"/>
+            <Button Command="{Binding SaveTripCommand}" Text="Trip mentése" WidthRequest="150" />
+            <Button Command="{Binding CancelNewTripCommand}" Text="Vissza" WidthRequest="150" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

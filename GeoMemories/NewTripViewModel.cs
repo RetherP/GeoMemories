@@ -6,12 +6,12 @@ using System.Text.Json;
 
 namespace GeoMemories
 {
-    [QueryProperty(nameof(NewTrip),"NewTrip")]
-    [QueryProperty(nameof(newMapList),"MapPins")]
-    [QueryProperty(nameof(newPictureList),"Pictures")]
-    public partial class NewTripViewModel:ObservableObject
+    [QueryProperty(nameof(NewTrip), "NewTrip")]
+    [QueryProperty(nameof(newMapList), "MapPins")]
+    [QueryProperty(nameof(newPictureList), "Pictures")]
+    public partial class NewTripViewModel : ObservableObject
     {
-        private const string url = "https://nominatim.openstreetmap.org/";
+        private readonly string url = "https://nominatim.openstreetmap.org/";
         [ObservableProperty]
         Trip newTrip;
 
@@ -36,7 +36,7 @@ namespace GeoMemories
         [RelayCommand]
         public async Task PlacePin()
         {
-            string urlsafeAdd= Uri.EscapeDataString(address.ToString());
+            string urlsafeAdd = Uri.EscapeDataString(address.ToString());
             HttpResponseMessage response = await client.GetAsync($"{url}search?q={urlsafeAdd}&format=json&limit=1");
             if (response.IsSuccessStatusCode)
             {
@@ -54,26 +54,36 @@ namespace GeoMemories
                 }
                 else
                 {
-                    WeakReferenceMessenger.Default.Send("Address not found");
+                    WeakReferenceMessenger.Default.Send("Address not found, please check the address you entered");
                 }
             }
             else
             {
                 WeakReferenceMessenger.Default.Send(response.StatusCode.ToString());
             }
-                Address = new Address();
+            Address = new Address();
+        }
+        private bool CanSave()
+        {
+            return NewTrip != null && !string.IsNullOrWhiteSpace(NewTrip.Name) && NewTrip.EndDate >= NewTrip.StartDate;
         }
         [RelayCommand]
         public async Task SaveTrip()
         {
-
-            var param = new ShellNavigationQueryParameters
+            if (CanSave())
             {
-                {"EditedTip", NewTrip},
-                {"addedpics", newPictureList},
-                {"addedpins",newMapList}
-            };
-            await Shell.Current.GoToAsync("..", param);
+                var param = new ShellNavigationQueryParameters
+                {
+                    {"EditedTip", NewTrip},
+                    {"addedpics", newPictureList},
+                    {"addedpins",newMapList}
+                };
+                await Shell.Current.GoToAsync("..", param);
+            }
+            else
+            {
+                WeakReferenceMessenger.Default.Send("Please fill in all required fields correctly");
+            }
         }
         [RelayCommand]
         public async Task CancelNewTrip()

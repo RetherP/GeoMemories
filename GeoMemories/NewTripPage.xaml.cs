@@ -12,14 +12,9 @@ public partial class NewTripPage : ContentPage
         InitializeComponent();
         this.vm = vm;
         BindingContext = this.vm;
-        WeakReferenceMessenger.Default.Register<NewTripPage, string>(this, (r, m) =>
-        {
-            r.DisplayAlert("Alert", m, "OK");
-        });
         var layer = Mapsui.Tiling.OpenStreetMap.CreateTileLayer();
         myMap.Map.Layers.Add(layer);
         var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
         myMap.Map.Home = n => n.CenterOnAndZoomTo(new MPoint(center.x,center.y), resolution: 2000, 500, Mapsui.Animations.Easing.CubicOut);
-
     }
 }
