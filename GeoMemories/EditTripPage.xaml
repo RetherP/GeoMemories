@@ -28,7 +28,7 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:MapPin">
                         <Grid ColumnDefinitions="*,*">
-                            <Label Grid.Column="0" Text="{Binding AddressString}"/>
+                            <Label Grid.Column="0" Text="{Binding ID}"/>
                             <Button Grid.Column="1" Text="Delete Pin"
                          Command="{Binding Path=BindingContext.DeletePinCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                      CommandParameter="{Binding .}"/>
@@ -36,6 +36,8 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+
+            <Button Text="Cancel Edit" Command="{Binding CancelEditCommand}"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Mapsui;
+using Mapsui.Layers;
 using Mapsui.Projections;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using System;
@@ -31,6 +32,7 @@ namespace GeoMemories
         public ObservableCollection<MapPin> MapPins { get; set; }
         public ObservableCollection<Picture> Pictures { get; set; }
 
+        
         public ObservableCollection<MapPin> MapPinsDraft { get; set; }
         public ObservableCollection<Picture> PicturesDraft { get; set; }
         
@@ -57,6 +59,7 @@ namespace GeoMemories
             get => map;
             set => SetProperty(ref map, value);
         }
+        public MemoryLayer PinLayer { get; set; } = new MemoryLayer { Name = "Pin Layer" };
         [RelayCommand]
         public async Task Save()
         {
@@ -84,6 +87,29 @@ namespace GeoMemories
             Map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer());
             var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
             Map.Home = n => n.CenterOnAndZoomTo(new MPoint(center.x, center.y), resolution: 2000, 500, Mapsui.Animations.Easing.CubicOut);
+            Map.Layers.Add(PinLayer);
+        }
+        public void MapRefesh()
+        {
+            var newFeatures = new List<IFeature>();
+            foreach (var item in MapPinsDraft)
+            {
+                var coord = SphericalMercator.FromLonLat(item.Longitude, item.Latitude);
+                var geofeature = new Mapsui.Nts.GeometryFeature(new NetTopologySuite.Geometries.Point(coord.x, coord.y));
+                geofeature.Styles.Add(new Mapsui.Styles.SymbolStyle
+                {
+                    Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.Red),
+                    SymbolType = Mapsui.Styles.SymbolType.Ellipse,
+                    SymbolScale = 0.5
+                });
+                newFeatures.Add(geofeature);
+            }
+            PinLayer.Features = newFeatures;
+            PinLayer.DataHasChanged();
+        }
+        public void MapPinsDraft_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            MapRefesh();
         }
     }
 }

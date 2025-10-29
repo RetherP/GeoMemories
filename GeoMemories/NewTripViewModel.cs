@@ -48,24 +48,24 @@ namespace GeoMemories
         }
         //Egy új réteg a térképen
         public MemoryLayer PinLayer { get; } = new MemoryLayer { Name = "Pin Layer" };
-        public void OnPinCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        public void newMapList_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             //A Feature egy térképen lévő elemek listája
             var newFeatures = new List<IFeature>();
             foreach (var pinItem in newMapList)
             {
                 //Ez azért kell hogy a GPS-es szabványból a térkép által értelmezett szabványt készítsünk
-                var mPoint = SphericalMercator.FromLonLat(pinItem.Longitude, pinItem.Latitude);
+                var coord = SphericalMercator.FromLonLat(pinItem.Longitude, pinItem.Latitude);
                 //Adott x,y helyre rak egy speciális geometriai alakot.
-                var feature = new Mapsui.Nts.GeometryFeature(new NetTopologySuite.Geometries.Point(mPoint.x, mPoint.y));
+                var geofeature = new Mapsui.Nts.GeometryFeature(new NetTopologySuite.Geometries.Point(coord.x, coord.y));
                 //a fentebb lévő alakzatak ad egy stílust
-                feature.Styles.Add(new Mapsui.Styles.SymbolStyle
+                geofeature.Styles.Add(new Mapsui.Styles.SymbolStyle
                 {
                     Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.Red),
                     SymbolType = Mapsui.Styles.SymbolType.Ellipse,
                     SymbolScale = 0.5
                 });
-                newFeatures.Add(feature);
+                newFeatures.Add(geofeature);
             }
             //Teljes listacsere mivel a memorylayer nem engedi azt hogy töröljünk vagy hozzáadjunk elemeket.
             PinLayer.Features = newFeatures;

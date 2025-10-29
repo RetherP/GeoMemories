@@ -69,16 +69,16 @@ namespace GeoMemories
         {
             if (SelectedTrip != null)
             {
-                
-                foreach (var item in MapPins)
+                //Azért kell a ToList mert azt nem járhatom be foreach-el amit menet közben módosítok
+                foreach (var item in MapPins.ToList())
                 {
-                    if (item.ID == SelectedTrip.ID)
+                    if (item.TripID == SelectedTrip.ID)
                     {
                         MapPins.Remove(item);
                         await db.DeleteMapPinAsync(item.ID);
                     }
                 }
-                foreach (var item in Pictures)
+                foreach (var item in Pictures.ToList())
                 {
                     if (item.ID == SelectedTrip.ID)
                     {
