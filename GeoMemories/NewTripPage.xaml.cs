@@ -17,12 +17,12 @@ public partial class NewTripPage : ContentPage
     }
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        vm.newMapList.CollectionChanged += vm.newMapList_CollectionChanged;
+        vm.NewMapList.CollectionChanged += vm.newMapList_CollectionChanged;
         base.OnNavigatedTo(args);
     }
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        vm.newMapList.CollectionChanged -= vm.newMapList_CollectionChanged;
+        vm.NewMapList.CollectionChanged -= vm.newMapList_CollectionChanged;
         base.OnNavigatedFrom(args);
     }
 }

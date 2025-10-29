@@ -11,7 +11,7 @@ using System.Text.Json;
 namespace GeoMemories
 {
     [QueryProperty(nameof(NewTrip), "NewTrip")]
-    [QueryProperty(nameof(newMapList), "MapPins")]
+    [QueryProperty(nameof(NewMapList), "MapPins")]
     [QueryProperty(nameof(NewPictureList), "Pictures")]
     public partial class NewTripViewModel : ObservableObject
     {
@@ -19,7 +19,7 @@ namespace GeoMemories
         [ObservableProperty]
         Trip newTrip;
 
-        public ObservableCollection<MapPin> newMapList { get; set; }
+        public ObservableCollection<MapPin> NewMapList { get; set; }
         public ObservableCollection<Picture> NewPictureList { get; set; }
 
         JsonSerializerOptions serializerOptions = new JsonSerializerOptions
@@ -46,7 +46,7 @@ namespace GeoMemories
         {
             //A Feature egy térképen lévő elemek listája
             var newFeatures = new List<IFeature>();
-            foreach (var pinItem in newMapList)
+            foreach (var pinItem in NewMapList)
             {
                 //Ez azért kell hogy a GPS-es szabványból a térkép által értelmezett szabványt készítsünk
                 var coord = SphericalMercator.FromLonLat(pinItem.Longitude, pinItem.Latitude);
@@ -90,7 +90,7 @@ namespace GeoMemories
                     var res = JsonSerializer.Deserialize<List<NominatimResult>>(content, serializerOptions);
                     if (res.Count != 0)
                     {
-                        newMapList.Add(new MapPin()
+                        NewMapList.Add(new MapPin()
                         {
                             TripID = newTrip.ID,
                             Latitude = double.Parse(res[0].lattitude),
@@ -123,7 +123,7 @@ namespace GeoMemories
                 {
                     {"EditedTip", NewTrip},
                     {"addedpics", NewPictureList},
-                    {"addedpins",newMapList}
+                    {"addedpins",NewMapList}
                 };
                 await Shell.Current.GoToAsync("..", param);
             }
@@ -180,6 +180,7 @@ namespace GeoMemories
                     FilePath = filePath,
                     FileName = file.FileName
                 });
+                OnPropertyChanged(nameof(NewPictureList));
             }
             catch (Exception e)
             {

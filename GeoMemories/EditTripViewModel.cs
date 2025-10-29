@@ -14,10 +14,6 @@ namespace GeoMemories
     [QueryProperty(nameof(Pictures), "Pictures")]
     public partial class EditTripViewModel : ObservableObject
     {
-        //TODO:
-        /*
-         * Add image handling
-         */
         [ObservableProperty]
         Trip editedTrip;
         [ObservableProperty]

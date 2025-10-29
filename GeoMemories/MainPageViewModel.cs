@@ -10,6 +10,8 @@ namespace GeoMemories
     [QueryProperty(nameof(addedPins), "addedpins")]
     public partial class MainPageViewModel : ObservableObject
     {
+
+        //TODO: Final test on android too, potientional fixes and design
         private IMemoryDB db;
 
         public ObservableCollection<Trip> Trips { get; set; }
@@ -61,6 +63,8 @@ namespace GeoMemories
                 await db.CreatePictureAsync(item);
             }
             EditedTrip = null;
+            await InitAsync();
+            WeakReferenceMessenger.Default.Send("The Save was succesful");
         }
         [RelayCommand]
         public async Task DeleteTrip()
@@ -118,7 +122,7 @@ namespace GeoMemories
             int id = -1;
             var list = await db.GetAllTripAsync();
             if (list.Count != 0)
-                id = list.LastOrDefault().ID;
+                id = list.Max(x=> x.ID);
             var param = new ShellNavigationQueryParameters
             {
                 {"NewTrip",new Trip() {ID = id+1, StartDate = DateTime.Now, EndDate = DateTime.Now } },
