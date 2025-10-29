@@ -6,7 +6,7 @@
              x:DataType="local:MainPageViewModel">
 
     <ScrollView>
-        <VerticalStackLayout WidthRequest="200">
+        <VerticalStackLayout WidthRequest="400">
             <CollectionView ItemsSource="{Binding Trips}" SelectionMode="Single" SelectedItem="{Binding SelectedTrip}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:Trip">

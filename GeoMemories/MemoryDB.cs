@@ -10,7 +10,7 @@ namespace GeoMemories
     public class MemoryDB : IMemoryDB
     {
         SQLite.SQLiteOpenFlags Flags = SQLite.SQLiteOpenFlags.ReadWrite | SQLite.SQLiteOpenFlags.Create;
-        string dbPath = Path.Combine(FileSystem.Current.AppDataDirectory, "memories.db3");
+        string dbPath = Path.Combine(FileSystem.Current.AppDataDirectory, "memory.db3");
         SQLiteAsyncConnection db;
         public MemoryDB()
         {

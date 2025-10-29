@@ -3,30 +3,24 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Mapsui;
 using Mapsui.Layers;
-using Mapsui.Nts;
 using Mapsui.Projections;
-using Mapsui.Styles;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Text.Json;
 
 namespace GeoMemories
 {
     [QueryProperty(nameof(NewTrip), "NewTrip")]
     [QueryProperty(nameof(newMapList), "MapPins")]
-    [QueryProperty(nameof(newPictureList), "Pictures")]
+    [QueryProperty(nameof(NewPictureList), "Pictures")]
     public partial class NewTripViewModel : ObservableObject
     {
-        /*
-         * Add Image Handling
-         */
         private readonly string url = "https://nominatim.openstreetmap.org/";
         [ObservableProperty]
         Trip newTrip;
 
         public ObservableCollection<MapPin> newMapList { get; set; }
-        public ObservableCollection<Picture> newPictureList { get; set; }
+        public ObservableCollection<Picture> NewPictureList { get; set; }
 
         JsonSerializerOptions serializerOptions = new JsonSerializerOptions
         {
@@ -70,7 +64,7 @@ namespace GeoMemories
             //Teljes listacsere mivel a memorylayer nem engedi azt hogy töröljünk vagy hozzáadjunk elemeket.
             PinLayer.Features = newFeatures;
             PinLayer.DataHasChanged();
-        } 
+        }
         public NewTripViewModel()
         {
             address = new Address();
@@ -81,6 +75,7 @@ namespace GeoMemories
             var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
             Map.Home = n => n.CenterOnAndZoomTo(new MPoint(center.x, center.y), resolution: 2000, 500, Mapsui.Animations.Easing.CubicOut);
             Map.Layers.Add(PinLayer);
+            NewPictureList = new ObservableCollection<Picture>();
         }
         [RelayCommand]
         public async Task PlacePin()
@@ -127,7 +122,7 @@ namespace GeoMemories
                 var param = new ShellNavigationQueryParameters
                 {
                     {"EditedTip", NewTrip},
-                    {"addedpics", newPictureList},
+                    {"addedpics", NewPictureList},
                     {"addedpins",newMapList}
                 };
                 await Shell.Current.GoToAsync("..", param);
@@ -141,6 +136,55 @@ namespace GeoMemories
         public async Task CancelNewTrip()
         {
             await Shell.Current.GoToAsync("..");
+        }
+        [RelayCommand]
+        public async Task TakePhoto()
+        {
+            if (MediaPicker.IsCaptureSupported)
+            {
+                FileResult? pic = await MediaPicker.Default.CapturePhotoAsync();
+                if (pic != null)
+                {
+                    await SavePhoto(pic);
+                }
+            }
+            else
+            {
+                WeakReferenceMessenger.Default.Send("Your device's camere is not supported");
+            }
+        }
+        [RelayCommand]
+        public async Task PickPhoto()
+        {
+            FileResult? pic = await MediaPicker.Default.PickPhotoAsync();
+            if (pic != null)
+            {
+                await SavePhoto(pic);
+            }
+        }
+        public async Task SavePhoto(FileResult file)
+        {
+            try
+            {
+                //A file lokációja, egyedi névvel.
+                string filePath = Path.Combine(FileSystem.AppDataDirectory, file.FileName);
+                //Nyit egy streamet és kapcsolatot a nyers adattal
+                using Stream sf = await file.OpenReadAsync();
+                //Elkészíti az új filet
+                using FileStream fs = File.Create(filePath);
+                //A forrásból a célbe belemásolja az adatokat.
+                await sf.CopyToAsync(fs);
+                NewPictureList.Add(new Picture()
+                {
+                    TripID = NewTrip.ID,
+                    FilePath = filePath,
+                    FileName = file.FileName
+                });
+            }
+            catch (Exception e)
+            {
+                WeakReferenceMessenger.Default.Send("An error occured while saving your picture: " + e.Message);
+            }
         }
     }
 }

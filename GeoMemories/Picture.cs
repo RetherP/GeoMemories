@@ -20,6 +20,8 @@ namespace GeoMemories
         int tripID;
         [ObservableProperty]
         string filePath;
+        [ObservableProperty]
+        string fileName;
         
         public Picture GetCopy()
         {

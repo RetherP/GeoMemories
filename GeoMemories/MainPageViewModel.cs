@@ -26,43 +26,41 @@ namespace GeoMemories
         Trip editedTrip;
         async partial void OnEditedTripChanged(Trip value)
         {
-            if (value != null)
+            if (value == null) return;
+            if (SelectedTrip != null)
             {
-                if (SelectedTrip != null)
+                Trips.Remove(SelectedTrip);
+                var MapRemove = MapPins.Where(x => x.TripID == value.ID);
+                foreach (var item in MapRemove.ToList())
                 {
-                    Trips.Remove(SelectedTrip);
-                    var MapRemove = MapPins.Where(x => x.TripID == value.ID);
-                    foreach (var item in MapRemove.ToList())
-                    {
-                        MapPins.Remove(item);
-                        await db.DeleteMapPinAsync(item.ID);
-                    }
-                    var PictureToRemove = Pictures.Where(x => x.TripID == value.ID);
-                    foreach (var item in PictureToRemove.ToList())
-                    {
-                        Pictures.Remove(item);
-                        await db.DeletePictureByIdAsync(item.ID);
-                    }
-                    await db.UpdateTripAsync(value);
-                    SelectedTrip = null;
+                    MapPins.Remove(item);
+                    await db.DeleteMapPinAsync(item.ID);
                 }
-                else
+                var PictureToRemove = Pictures.Where(x => x.TripID == value.ID);
+                foreach (var item in PictureToRemove.ToList())
                 {
-                    await db.CreateTripAsync(value);
-
+                    Pictures.Remove(item);
+                    await db.DeletePictureByIdAsync(item.ID);
                 }
-                Trips.Add(value);
-                foreach (var item in addedPins)
-                {
-                    MapPins.Add(item);
-                    await db.CreateMapPinAsync(item);
-                }
-                foreach (var item in addedPics)
-                {
-                    Pictures.Add(item);
-                    await db.CreatePictureAsync(item);
-                }
+                await db.UpdateTripAsync(value);
+                SelectedTrip = null;
             }
+            else
+            {
+                await db.CreateTripAsync(value);
+            }
+            Trips.Add(value);
+            foreach (var item in addedPins)
+            {
+                MapPins.Add(item);
+                await db.CreateMapPinAsync(item);
+            }
+            foreach (var item in addedPics)
+            {
+                Pictures.Add(item);
+                await db.CreatePictureAsync(item);
+            }
+            EditedTrip = null;
         }
         [RelayCommand]
         public async Task DeleteTrip()
@@ -88,6 +86,7 @@ namespace GeoMemories
                 }
                 await db.DeleteTripAsync(SelectedTrip.ID);
                 Trips.Remove(SelectedTrip);
+                SelectedTrip = null;
             }
             else
             {
@@ -101,7 +100,7 @@ namespace GeoMemories
             {
                 var param = new ShellNavigationQueryParameters
                 {
-                    {"EditedTrip",SelectedTrip },
+                    {"EditedTrip",SelectedTrip},
                     {"MapPins", MapPins},
                     {"Pictures",Pictures }
                 };
@@ -115,9 +114,10 @@ namespace GeoMemories
         [RelayCommand]
         public async Task NewTrip()
         {
+            SelectedTrip = null;
             int id = -1;
             var list = await db.GetAllTripAsync();
-            if(list.Count != 0)
+            if (list.Count != 0)
                 id = list.LastOrDefault().ID;
             var param = new ShellNavigationQueryParameters
             {

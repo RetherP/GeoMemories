@@ -48,6 +48,28 @@
                     <Button Grid.Row="4" Text="Save Pin" Command="{Binding SavePinCommand}"/>
                 </Grid>
             </Border>
+            <Border Stroke="Black" StrokeThickness="2" StrokeShape="RoundRectangle 10">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Pictures" FontSize="20" HorizontalOptions="Center" Padding="5"/>
+                    <CollectionView ItemsSource="{Binding PicturesDraft}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="local:Picture">
+                                <Border Stroke="LightCoral"  Margin="5" Padding="5" StrokeShape="RoundRectangle 10"  StrokeThickness="2">
+                                    <VerticalStackLayout Spacing="20">
+                                        <Image Source="{Binding FilePath}" Aspect="AspectFill" HeightRequest="200" MaximumHeightRequest="200" WidthRequest="200"/>
+                                        <Button Text="Delete" 
+                                        Command="{Binding Path=BindingContext.DeletePicCommand, 
+                                        Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                        CommandParameter="{Binding .}"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+            <Button Text="Take a Picuture" Command="{Binding TakePhotoCommand}"/>
+            <Button Text="Pick a Photo From your Galery" Command="{Binding PickPhotoCommand}"/>
             <Button Text="Save Edit" Command="{Binding SaveCommand}"/>
             <Button Text="Cancel Edit" Command="{Binding CancelEditCommand}"/>
         </VerticalStackLayout>

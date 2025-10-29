@@ -26,10 +26,23 @@
             <Entry Text="{Binding Address.City}" Placeholder="Írja ide a várost, például: Budapest"/>
             <Entry Text="{Binding Address.Country}" Placeholder="Írja ide az országot, például: Nigéria"/>
             <Entry Text="{Binding Address.Street}" Placeholder="Írja ide az utca házszámot például:Pacsírta utca 176"/>
-            
             <Button Command="{Binding PlacePinCommand}" Text="Pin elhelyezése" WidthRequest="150"/>
-            <Button Command="{Binding SaveTripCommand}" Text="Trip mentése" WidthRequest="150" />
-            <Button Command="{Binding CancelNewTripCommand}" Text="Vissza" WidthRequest="150" />
+            <Line X1="0" X2="400" Stroke="Black"/>
+            <CollectionView ItemsSource="{Binding NewPictureList}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="local:Picture">
+                        <Border Stroke="LightCoral"  Margin="5" Padding="5" StrokeShape="RoundRectangle 10"  StrokeThickness="2">
+                            <Image Grid.Row="0" Source="{Binding FilePath}" Aspect="AspectFill" HeightRequest="200" MaximumHeightRequest="200" WidthRequest="200"/>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <VerticalStackLayout Spacing="20">
+                <Button Text="Take a Picuture" Command="{Binding TakePhotoCommand}"/>
+                <Button Text="Pick a Photo From your Galery" Command="{Binding PickPhotoCommand}"/>
+                <Button Command="{Binding SaveTripCommand}" Text="Trip mentése"/>
+                <Button Command="{Binding CancelNewTripCommand}" Text="Vissza" />
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

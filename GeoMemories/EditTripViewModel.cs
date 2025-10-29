@@ -4,28 +4,18 @@ using CommunityToolkit.Mvvm.Messaging;
 using Mapsui;
 using Mapsui.Layers;
 using Mapsui.Projections;
-using Mapsui.UI.Maui;
-using SkiaSharp.Views.Maui.Controls.Hosting;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace GeoMemories
 {
-    [QueryProperty(nameof(EditedTrip),"EditedTrip")]
+    [QueryProperty(nameof(EditedTrip), "EditedTrip")]
     [QueryProperty(nameof(MapPins), "MapPins")]
     [QueryProperty(nameof(Pictures), "Pictures")]
     public partial class EditTripViewModel : ObservableObject
     {
         //TODO:
         /*
-         * Finish the UI, and all the necessary save commands
-         * Add pin delete methodology --> DeletePin func finish
          * Add image handling
          */
         [ObservableProperty]
@@ -36,7 +26,7 @@ namespace GeoMemories
         public ObservableCollection<MapPin> MapPins { get; set; }
         public ObservableCollection<Picture> Pictures { get; set; }
 
-        
+
         public ObservableCollection<MapPin> MapPinsDraft { get; set; }
         public ObservableCollection<Picture> PicturesDraft { get; set; }
 
@@ -126,14 +116,14 @@ namespace GeoMemories
         public async Task SavePin()
         {
             if (Address != null && !string.IsNullOrWhiteSpace(Address.City) && !string.IsNullOrWhiteSpace(Address.Country))
-            { 
+            {
                 HttpResponseMessage response = await client.GetAsync($"{url}search?q={Uri.EscapeDataString(Address.ToString())}&format=json&limit=1");
 
                 if (response.IsSuccessStatusCode)
                 {
                     var ctn = await response.Content.ReadAsStringAsync();
-                    var res = JsonSerializer.Deserialize<List<NominatimResult>>(ctn,options);
-                    if(res.Count > 0)
+                    var res = JsonSerializer.Deserialize<List<NominatimResult>>(ctn, options);
+                    if (res.Count > 0)
                     {
                         MapPinsDraft.Add(new MapPin
                         {
@@ -143,18 +133,69 @@ namespace GeoMemories
                             AddressString = Address.ToString()
                         });
                         Address = new Address();
+                        MapRefesh();
                     }
                     else
                     {
                         WeakReferenceMessenger.Default.Send("Invalid Address, please enter a valid one");
                     }
-                    
+
                 }
                 else
                 {
-                    WeakReferenceMessenger.Default.Send("Error converting the Address to the Coordinates: "+ response.StatusCode);
+                    WeakReferenceMessenger.Default.Send("Error converting the Address to the Coordinates: " + response.StatusCode);
                     Address = new Address();
                 }
+            }
+        }
+        [RelayCommand]
+        public void DeletePic(Picture pic)
+        {
+            PicturesDraft.Remove(pic);
+        }
+        [RelayCommand]
+        public async Task TakePhoto()
+        {
+            if (MediaPicker.IsCaptureSupported)
+            {
+                FileResult? pic = await MediaPicker.Default.CapturePhotoAsync();
+                if (pic != null)
+                {
+                    await SavePhoto(pic);
+                }
+            }
+            else
+            {
+                WeakReferenceMessenger.Default.Send("Your device's camere is not supported");
+            }
+        }
+        [RelayCommand]
+        public async Task PickPhoto()
+        {
+            FileResult? pic = await MediaPicker.Default.PickPhotoAsync();
+            if (pic != null)
+            {
+                await SavePhoto(pic);
+            }
+        }
+        public async Task SavePhoto(FileResult file)
+        {
+            try
+            {
+                string filePath = Path.Combine(FileSystem.AppDataDirectory, file.FileName);
+                using Stream sf = await file.OpenReadAsync();
+                using FileStream fs = File.Create(filePath);
+                await sf.CopyToAsync(fs);
+                PicturesDraft.Add(new Picture()
+                {
+                    TripID = EditedTrip.ID,
+                    FilePath = filePath,
+                    FileName = file.FileName
+                });
+            }
+            catch (Exception e)
+            {
+                WeakReferenceMessenger.Default.Send("An error occured while saving your picture: " + e.Message);
             }
         }
     }
