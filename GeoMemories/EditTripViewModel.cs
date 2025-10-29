@@ -1,14 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Mapsui;
 using Mapsui.Layers;
 using Mapsui.Projections;
+using Mapsui.UI.Maui;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace GeoMemories
@@ -35,18 +39,24 @@ namespace GeoMemories
         
         public ObservableCollection<MapPin> MapPinsDraft { get; set; }
         public ObservableCollection<Picture> PicturesDraft { get; set; }
-        
-        
+
+        [ObservableProperty]
+        Address address;
+
+        private readonly string url = "https://nominatim.openstreetmap.org/";
+        HttpClient client = new HttpClient();
+        JsonSerializerOptions options = new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
         public void Init()
         {
-            Draft = editedTrip.GetCopy();
-            MapPinsDraft = new ObservableCollection<MapPin>();
+            Draft = EditedTrip.GetCopy();
             foreach (var item in MapPins)
             {
                 if (item.TripID == EditedTrip.ID)
                     MapPinsDraft.Add(item.GetCopy());
             }
-            PicturesDraft =  new ObservableCollection<Picture>();
             foreach (var item in Pictures)
             {
                 if (item.TripID == EditedTrip.ID)
@@ -80,6 +90,7 @@ namespace GeoMemories
         public void DeletePin(MapPin pin)
         {
             MapPinsDraft.Remove(pin);
+            MapRefesh();
         }
         public EditTripViewModel()
         {
@@ -88,6 +99,10 @@ namespace GeoMemories
             var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
             Map.Home = n => n.CenterOnAndZoomTo(new MPoint(center.x, center.y), resolution: 2000, 500, Mapsui.Animations.Easing.CubicOut);
             Map.Layers.Add(PinLayer);
+            MapPinsDraft = new ObservableCollection<MapPin>();
+            PicturesDraft = new ObservableCollection<Picture>();
+            Address = new Address();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("MyMauiApp/1.0 (vbelya07@gmail.com)");
         }
         public void MapRefesh()
         {
@@ -107,9 +122,40 @@ namespace GeoMemories
             PinLayer.Features = newFeatures;
             PinLayer.DataHasChanged();
         }
-        public void MapPinsDraft_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        [RelayCommand]
+        public async Task SavePin()
         {
-            MapRefesh();
+            if (Address != null && !string.IsNullOrWhiteSpace(Address.City) && !string.IsNullOrWhiteSpace(Address.Country))
+            { 
+                HttpResponseMessage response = await client.GetAsync($"{url}search?q={Uri.EscapeDataString(Address.ToString())}&format=json&limit=1");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var ctn = await response.Content.ReadAsStringAsync();
+                    var res = JsonSerializer.Deserialize<List<NominatimResult>>(ctn,options);
+                    if(res.Count > 0)
+                    {
+                        MapPinsDraft.Add(new MapPin
+                        {
+                            TripID = EditedTrip.ID,
+                            Latitude = double.Parse(res[0].lattitude),
+                            Longitude = double.Parse(res[0].longitude),
+                            AddressString = Address.ToString()
+                        });
+                        Address = new Address();
+                    }
+                    else
+                    {
+                        WeakReferenceMessenger.Default.Send("Invalid Address, please enter a valid one");
+                    }
+                    
+                }
+                else
+                {
+                    WeakReferenceMessenger.Default.Send("Error converting the Address to the Coordinates: "+ response.StatusCode);
+                    Address = new Address();
+                }
+            }
         }
     }
 }

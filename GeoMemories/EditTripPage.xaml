@@ -24,19 +24,31 @@
                    WidthRequest="400"
                    HeightRequest="200"
                    />
-            <CollectionView ItemsSource="{Binding MapPinsDraft}">
+            <CollectionView ItemsSource="{Binding MapPinsDraft}" >
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:MapPin">
-                        <Grid ColumnDefinitions="*,*">
-                            <Label Grid.Column="0" Text="{Binding ID}"/>
-                            <Button Grid.Column="1" Text="Delete Pin"
+                        <Border Stroke="LightSlateGrey" Margin="5" Padding="5" StrokeShape="RoundRectangle 10"  StrokeThickness="2">
+                            <Grid ColumnDefinitions="*,*">
+                                <Label HorizontalOptions="Center" VerticalOptions="Center" Grid.Column="0" FontSize="15" Text="{Binding AddressString}"/>
+                                <Button Grid.Column="1" Text="Delete Pin"
                          Command="{Binding Path=BindingContext.DeletePinCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                     CommandParameter="{Binding .}"/>
-                        </Grid>
+                     CommandParameter="{Binding .}"
+                                        VerticalOptions="End"/>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-
+            <Border Stroke="LightCoral"  Margin="5" Padding="5" StrokeShape="RoundRectangle 10"  StrokeThickness="2">
+                <Grid RowSpacing="15" RowDefinitions="*,*,*,*,*" ColumnDefinitions="*">
+                    <Label Text="Pin Entry section:" Grid.Row="0" FontSize="15"/>
+                    <Entry Grid.Row="1" Text="{Binding Address.City}" Placeholder="Please enter the City"/>
+                    <Entry Grid.Row="2" Text="{Binding Address.Country}" Placeholder="Please enter the Country"/>
+                    <Entry Grid.Row="3" Text="{Binding Address.Street}" Placeholder="Please enter the street and house number (Optional)"/>
+                    <Button Grid.Row="4" Text="Save Pin" Command="{Binding SavePinCommand}"/>
+                </Grid>
+            </Border>
+            <Button Text="Save Edit" Command="{Binding SaveCommand}"/>
             <Button Text="Cancel Edit" Command="{Binding CancelEditCommand}"/>
         </VerticalStackLayout>
     </ScrollView>

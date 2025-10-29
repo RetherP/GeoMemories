@@ -11,15 +11,8 @@ public partial class EditTripPage : ContentPage
 	}
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        VM.Init();
         base.OnNavigatedTo(args);
-        VM.MapRefesh();
-        VM.MapPinsDraft.CollectionChanged += VM.MapPinsDraft_CollectionChanged;
-        
-    }
-    protected override void OnDisappearing()
-    {
-        VM.MapPinsDraft.CollectionChanged -= VM.MapPinsDraft_CollectionChanged;
-        base.OnDisappearing();
+        VM.Init();
+        VM.MapRefesh();   
     }
 }

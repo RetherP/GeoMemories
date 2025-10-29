@@ -32,13 +32,13 @@ namespace GeoMemories
                 {
                     Trips.Remove(SelectedTrip);
                     var MapRemove = MapPins.Where(x => x.TripID == value.ID);
-                    foreach (var item in MapRemove)
+                    foreach (var item in MapRemove.ToList())
                     {
                         MapPins.Remove(item);
                         await db.DeleteMapPinAsync(item.ID);
                     }
                     var PictureToRemove = Pictures.Where(x => x.TripID == value.ID);
-                    foreach (var item in PictureToRemove)
+                    foreach (var item in PictureToRemove.ToList())
                     {
                         Pictures.Remove(item);
                         await db.DeletePictureByIdAsync(item.ID);
@@ -106,7 +106,6 @@ namespace GeoMemories
                     {"Pictures",Pictures }
                 };
                 await Shell.Current.GoToAsync("edittrip", param);
-                SelectedTrip = null;
             }
             else
             {
@@ -122,7 +121,7 @@ namespace GeoMemories
                 id = list.LastOrDefault().ID;
             var param = new ShellNavigationQueryParameters
             {
-                {"NewTrip",new Trip() {ID = id+1 } },
+                {"NewTrip",new Trip() {ID = id+1, StartDate = DateTime.Now, EndDate = DateTime.Now } },
                 {"MapPins",new ObservableCollection<MapPin>()},
                 { "Pictures", new ObservableCollection<Picture>()},
             };
