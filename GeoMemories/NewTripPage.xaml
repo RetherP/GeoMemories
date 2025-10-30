@@ -9,24 +9,24 @@
 
     <ScrollView>
         <VerticalStackLayout WidthRequest="400" Spacing="20">
-            <Entry Placeholder="Enter the name of the new trip" Text="{Binding NewTrip.Name}"/>
-            <Entry Placeholder="Enter the description of the new trip" Text="{Binding NewTrip.Description}"/>
+            <Entry Placeholder="Please enter the trip's name" Text="{Binding NewTrip.Name}"/>
+            <Entry Placeholder="Please enter the trip's description(optional)" Text="{Binding NewTrip.Description}"/>
             <HorizontalStackLayout>
-                <Label Text="Enter the start date of your trip"/>
+                <Label Text="Start Date: " VerticalOptions="Center"/>
                 <DatePicker Date="{Binding NewTrip.StartDate}"/>
             </HorizontalStackLayout>
             <HorizontalStackLayout>
-                <Label Text="Enter the end date of your trip"/>
+                <Label VerticalOptions="Center" Text="End Date: "/>
                 <DatePicker Date="{Binding NewTrip.EndDate}"/>
             </HorizontalStackLayout>
             <mapsui:MapView    Map="{Binding Map}"
                                WidthRequest="400"
                                HeightRequest="200"
                                />
-            <Entry Text="{Binding Address.City}" Placeholder="Írja ide a várost, például: Budapest"/>
-            <Entry Text="{Binding Address.Country}" Placeholder="Írja ide az országot, például: Nigéria"/>
-            <Entry Text="{Binding Address.Street}" Placeholder="Írja ide az utca házszámot például:Pacsírta utca 176"/>
-            <Button Command="{Binding PlacePinCommand}" Text="Pin elhelyezése" WidthRequest="150"/>
+            <Entry Text="{Binding Address.City}" Placeholder="Please enter the City eg.: Miskolc"/>
+            <Entry Text="{Binding Address.Country}" Placeholder="Please enter the Country eg.: Kazakhstan"/>
+            <Entry Text="{Binding Address.Street}" Placeholder="Please enter the street and house number (Optional) eg.: Tulip street 25"/>
+            <Button Command="{Binding PlacePinCommand}" Text="Place the pin" WidthRequest="150"/>
             <Line X1="0" X2="400" Stroke="Black"/>
             <CollectionView ItemsSource="{Binding NewPictureList}">
                 <CollectionView.ItemTemplate>
@@ -38,10 +38,10 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
             <VerticalStackLayout Spacing="20">
-                <Button Text="Take a Picuture" Command="{Binding TakePhotoCommand}"/>
-                <Button Text="Pick a Photo From your Galery" Command="{Binding PickPhotoCommand}"/>
-                <Button Command="{Binding SaveTripCommand}" Text="Trip mentése"/>
-                <Button Command="{Binding CancelNewTripCommand}" Text="Vissza" />
+                <Button Text="Take a picture" Command="{Binding TakePhotoCommand}"/>
+                <Button Text="Select a picture from galery" Command="{Binding PickPhotoCommand}"/>
+                <Button Command="{Binding SaveTripCommand}" Text="Save Trip"/>
+                <Button Command="{Binding CancelNewTripCommand}" Text="Cancel" />
             </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>

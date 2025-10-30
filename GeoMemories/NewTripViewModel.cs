@@ -135,6 +135,10 @@ namespace GeoMemories
         [RelayCommand]
         public async Task CancelNewTrip()
         {
+            foreach (var item in NewPictureList)
+            {
+                File.Delete(item.FilePath);
+            }
             await Shell.Current.GoToAsync("..");
         }
         [RelayCommand]

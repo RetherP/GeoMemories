@@ -12,11 +12,11 @@
             <Entry Text="{Binding Draft.Name}"/>
             <Entry Text="{Binding Draft.Description}"/>
             <HorizontalStackLayout>
-                <Label Text="Trip start date: "/>
+                <Label VerticalOptions="Center" Text="Start Date: "/>
                 <DatePicker Date="{Binding Draft.StartDate}"/>
             </HorizontalStackLayout>
             <HorizontalStackLayout>
-                <Label Text="Trip end date:"/>
+                <Label VerticalOptions="Center" Text="End data:"/>
                 <DatePicker Date="{Binding Draft.EndDate}"/>
             </HorizontalStackLayout>
             <mapsui:MapView    
@@ -42,9 +42,9 @@
             <Border Stroke="LightCoral"  Margin="5" Padding="5" StrokeShape="RoundRectangle 10"  StrokeThickness="2">
                 <Grid RowSpacing="15" RowDefinitions="*,*,*,*,*" ColumnDefinitions="*">
                     <Label Text="Pin Entry section:" Grid.Row="0" FontSize="15"/>
-                    <Entry Grid.Row="1" Text="{Binding Address.City}" Placeholder="Please enter the City"/>
-                    <Entry Grid.Row="2" Text="{Binding Address.Country}" Placeholder="Please enter the Country"/>
-                    <Entry Grid.Row="3" Text="{Binding Address.Street}" Placeholder="Please enter the street and house number (Optional)"/>
+                    <Entry Grid.Row="1" Text="{Binding Address.City}" Placeholder="Please enter the City eg.: Miskolc"/>
+                    <Entry Grid.Row="2" Text="{Binding Address.Country}" Placeholder="Please enter the Country eg.: Kazakhstan"/>
+                    <Entry Grid.Row="3" Text="{Binding Address.Street}" Placeholder="Please enter the street and house number (Optional) eg.: Tulip street 25"/>
                     <Button Grid.Row="4" Text="Save Pin" Command="{Binding SavePinCommand}"/>
                 </Grid>
             </Border>
