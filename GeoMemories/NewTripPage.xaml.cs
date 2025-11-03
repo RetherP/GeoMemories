@@ -20,6 +20,7 @@ public partial class NewTripPage : ContentPage
         vm.NewMapList.CollectionChanged += vm.newMapList_CollectionChanged;
         base.OnNavigatedTo(args);
     }
+    //It was eating up a lot of memory when opening new tabs, this reduced it.
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
         vm.NewMapList.CollectionChanged -= vm.newMapList_CollectionChanged;

@@ -7,14 +7,26 @@
 
     <ScrollView>
         <VerticalStackLayout WidthRequest="400">
-            <CollectionView ItemsSource="{Binding Trips}" SelectionMode="Single" SelectedItem="{Binding SelectedTrip}">
+            <Border Stroke="Black" StrokeShape="RoundRectangle 20" Margin="20,0">
+                <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*" ColumnSpacing="20" Margin="20,20,20,20">
+                    <Label FontSize="20" Text="Search Section" Grid.Row="0" Grid.ColumnSpan="2"/>
+                    <Entry Text="{Binding Search}" Grid.Row="1" Grid.ColumnSpan="2"/>
+                    <Button Margin="0,5" Text="Search" Command="{Binding SearchTripCommand}"
+            Grid.Column="0" Grid.Row="2"/>
+                    <Button Margin="0,5" Text="Delete Search" Command="{Binding DeleteSearchCommand}"
+            Grid.Column="1" Grid.Row="2"/>
+                </Grid>
+            </Border>
+            <CollectionView Margin="20,20,20,30" ItemsSource="{Binding Trips}" SelectionMode="Single" SelectedItem="{Binding SelectedTrip}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:Trip">
-                        <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
-                            <Label Grid.Row="0" Text="{Binding Name}"/>
-                            <Label Grid.Row="1" Grid.Column="0" Text="{Binding StartDate, StringFormat='{0:yyyy/MM/dd}'}"/>
-                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding EndDate,StringFormat='{0:yyyy/MM/dd}'}"/>
-                        </Grid>
+                        <Border Stroke="Black" Margin="0,5" StrokeShape="RoundRectangle 10">
+                            <Grid ColumnDefinitions="*,*" RowSpacing="5" RowDefinitions="*,*" Margin="10,10,10,10">
+                                <Label FontSize="16" Grid.Row="0" Text="{Binding Name}"/>
+                                <Label FontSize="16" Grid.Row="1" Grid.Column="0" Text="{Binding StartDate, StringFormat='{0:yyyy/MM/dd}'}"/>
+                                <Label FontSize="16" Grid.Row="1" Grid.Column="1" Text="{Binding EndDate,StringFormat='{0:yyyy/MM/dd}'}"/>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>

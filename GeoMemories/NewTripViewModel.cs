@@ -32,27 +32,26 @@ namespace GeoMemories
         [ObservableProperty]
         Address address;
 
-        private Mapsui.Map _map;
+        private Mapsui.Map map;
         public Mapsui.Map Map
         {
-            get => _map;
-            //Ez teljesen ugyan olyan mintha _map = value és utána OnPropertyChanged lenne
-            //csak egybefogja, kevesebb a hibaesély.
-            set => SetProperty(ref _map, value);
+            get => map;
+             //It is the same if i would use map = value and then call OnPropertyChanged
+            set => SetProperty(ref map, value);
         }
-        //Egy új réteg a térképen
+        //A new layer on the map
         public MemoryLayer PinLayer { get; } = new MemoryLayer { Name = "Pin Layer" };
         public void newMapList_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            //A Feature egy térképen lévő elemek listája
+            //A feature is a thing a drawing on a map, this is a list of those 
             var newFeatures = new List<IFeature>();
             foreach (var pinItem in NewMapList)
             {
-                //Ez azért kell hogy a GPS-es szabványból a térkép által értelmezett szabványt készítsünk
+                //This converts the GPS standardized "coordinates" to a standard that a map can understand
                 var coord = SphericalMercator.FromLonLat(pinItem.Longitude, pinItem.Latitude);
-                //Adott x,y helyre rak egy speciális geometriai alakot.
+                //Places a Geometrical Feature(like a point in my case) to a coordinate 
                 var geofeature = new Mapsui.Nts.GeometryFeature(new NetTopologySuite.Geometries.Point(coord.x, coord.y));
-                //a fentebb lévő alakzatak ad egy stílust
+                //Puts a styling to the geometrical feature
                 geofeature.Styles.Add(new Mapsui.Styles.SymbolStyle
                 {
                     Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.Red),
@@ -61,7 +60,8 @@ namespace GeoMemories
                 });
                 newFeatures.Add(geofeature);
             }
-            //Teljes listacsere mivel a memorylayer nem engedi azt hogy töröljünk vagy hozzáadjunk elemeket.
+            //A full list change beacause you cannot add or delete to a MemoryLayer's Feature list
+            //just completely change it
             PinLayer.Features = newFeatures;
             PinLayer.DataHasChanged();
         }
@@ -69,7 +69,12 @@ namespace GeoMemories
         {
             address = new Address();
             client = new HttpClient();
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("MyMauiApp/1.0 (vbelya07@gmail.com)");
+            //You must have a user-agent to call the nominatim API
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("MyMauiApp/1.0 (bvdev001@gmail.com)");
+            /*
+             * These lines creates the map and adds a new OpenStreetMap layer and centers it on the coordinates(which cooordintes need to be converted) and add the PinLayer, where
+             * the pins will be 
+             */
             Map = new Mapsui.Map();
             Map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer());
             var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
@@ -80,8 +85,14 @@ namespace GeoMemories
         [RelayCommand]
         public async Task PlacePin()
         {
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                WeakReferenceMessenger.Default.Send("Please connect to the internet to use the app.");
+                return;
+            }
             if (!string.IsNullOrWhiteSpace(Address.City) && !string.IsNullOrWhiteSpace(Address.City))
             {
+                //These lines translate the address to a format that can be inserted into the url to querry then querries them to get the coordinates
                 string urlsafeAdd = Uri.EscapeDataString(address.ToString());
                 HttpResponseMessage response = await client.GetAsync($"{url}search?q={urlsafeAdd}&format=json&limit=1");
                 if (response.IsSuccessStatusCode)
@@ -110,10 +121,7 @@ namespace GeoMemories
             }
             Address = new Address();
         }
-        private bool CanSave()
-        {
-            return NewTrip != null && !string.IsNullOrWhiteSpace(NewTrip.Name) && NewTrip.EndDate >= NewTrip.StartDate;
-        }
+        private bool CanSave() => NewTrip != null && !string.IsNullOrWhiteSpace(NewTrip.Name) && NewTrip.EndDate >= NewTrip.StartDate;
         [RelayCommand]
         public async Task SaveTrip()
         {
@@ -129,7 +137,7 @@ namespace GeoMemories
             }
             else
             {
-                WeakReferenceMessenger.Default.Send("Please fill in all required fields correctly");
+                WeakReferenceMessenger.Default.Send("Please fill in all required fields correctly. You cannot save a trip withour a name or an ealier end date than the start date");
             }
         }
         [RelayCommand]
@@ -170,13 +178,9 @@ namespace GeoMemories
         {
             try
             {
-                //A file lokációja, egyedi névvel.
                 string filePath = Path.Combine(FileSystem.AppDataDirectory, file.FileName);
-                //Nyit egy streamet és kapcsolatot a nyers adattal
                 using Stream sf = await file.OpenReadAsync();
-                //Elkészíti az új filet
                 using FileStream fs = File.Create(filePath);
-                //A forrásból a célbe belemásolja az adatokat.
                 await sf.CopyToAsync(fs);
                 NewPictureList.Add(new Picture()
                 {

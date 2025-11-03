@@ -10,8 +10,6 @@ namespace GeoMemories
     [QueryProperty(nameof(addedPins), "addedpins")]
     public partial class MainPageViewModel : ObservableObject
     {
-
-        //TODO: Final test on android too, potientional fixes and design
         private IMemoryDB db;
 
         public ObservableCollection<Trip> Trips { get; set; }
@@ -26,6 +24,10 @@ namespace GeoMemories
 
         [ObservableProperty]
         Trip editedTrip;
+
+        [ObservableProperty]
+        string search;
+
         async partial void OnEditedTripChanged(Trip value)
         {
             if (value == null) return;
@@ -108,6 +110,11 @@ namespace GeoMemories
                     {"MapPins", MapPins},
                     {"Pictures",Pictures }
                 };
+                if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+                {
+                    WeakReferenceMessenger.Default.Send("Please connect to the internet to use the app.");
+                    return;
+                }
                 await Shell.Current.GoToAsync("edittrip", param);
             }
             else
@@ -129,6 +136,11 @@ namespace GeoMemories
                 {"MapPins",new ObservableCollection<MapPin>()},
                 { "Pictures", new ObservableCollection<Picture>()},
             };
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                WeakReferenceMessenger.Default.Send("Please connect to the internet to use the app.");
+                return;
+            }
             await Shell.Current.GoToAsync("newtrip", param);
         }
         public MainPageViewModel(IMemoryDB db)
@@ -151,9 +163,33 @@ namespace GeoMemories
             picList.ForEach(x => Pictures.Add(x));
         }
         [RelayCommand]
-        public async Task DetailTrip()
+        public async Task SearchTrip()
         {
-            throw new NotImplementedException();
+            Search = Search.Trim();
+            if(string.IsNullOrEmpty(Search) || string.IsNullOrWhiteSpace(Search))
+            {
+                DeleteSearch();
+            }
+            else
+            {
+                Trips.Clear();
+                foreach (var item in await db.GetAllTripAsync())
+                {
+                    if (item.Name.ToLower().Contains(Search.ToLower()))
+                        Trips.Add(item);
+                }
+            }
+            Search = "";
+        }
+
+        [RelayCommand]
+        public async Task DeleteSearch()
+        {
+            Trips.Clear();
+            foreach (var item in await db.GetAllTripAsync())
+            {
+                Trips.Add(item);
+            }
         }
     }
 }
