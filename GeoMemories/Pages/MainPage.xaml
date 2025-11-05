@@ -33,6 +33,7 @@
             <Button Text="New Trip" Command="{Binding NewTripCommand}" Margin="10"/>
             <Button Text="Edit Trip" Command="{Binding EditTripCommand}" Margin="10"/>
             <Button Text="Delete" Command="{Binding DeleteTripCommand}" Margin="10"/>
+            <Button Text="Map Overview" Command="{Binding MapOverViewCommand}" Margin="10"/>
         </VerticalStackLayout>
     </ScrollView>
 

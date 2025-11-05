@@ -32,7 +32,8 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:Picture">
                         <Border Stroke="LightCoral"  Margin="5" Padding="5" StrokeShape="RoundRectangle 10"  StrokeThickness="2">
-                            <Image Grid.Row="0" Source="{Binding FilePath}" Aspect="AspectFill" HeightRequest="200" MaximumHeightRequest="200" WidthRequest="200"/>
+                            <Image Grid.Row="0" Source="{Binding FilePath}" Aspect="AspectFill" 
+                                   HeightRequest="200" MaximumHeightRequest="200" WidthRequest="200"/>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GeoMemories.Pages.MapOverview"
+             Title="MapOverview"
+             xmlns:local="clr-namespace:GeoMemories"
+             xmlns:pages="clr-namespace:GeoMemories.Pages"
+             x:DataType="pages:MapOverviewViewModel"
+             xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui">
+    <VerticalStackLayout>
+        <mapsui:MapView
+            Margin="0,20"
+            Map="{Binding Map}"
+            WidthRequest="400"
+            HeightRequest="200"/>
+        
+        <Grid RowSpacing="10" Margin="20,20" RowDefinitions="*,*,*,*" ColumnDefinitions="*,*">
+            <Label Text="Search Section" FontSize="22" Grid.Row="0" Grid.ColumnSpan="2"/>
+            <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                <Label FontSize="17" HorizontalOptions="Center" Text="Start Date"/>
+                <DatePicker FontSize="17" Date="{Binding Start}" HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                <Label FontSize="17" Text="End Date" HorizontalOptions="Center"/>
+                <DatePicker FontSize="17" Date="{Binding End}" HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+            <Button Grid.Row="2" Grid.ColumnSpan="2" Text="Search" Command="{Binding SearchCommand}"/>
+            <Button Grid.Row="3" Grid.ColumnSpan="2" Text="Delete Search" Command="{Binding DeleteSearchCommand}"/>
+        </Grid>
+        <Button Text="Back to Main Page" Margin="20,20" Command="{Binding BackCommand}"/>
+    </VerticalStackLayout>
+</ContentPage>

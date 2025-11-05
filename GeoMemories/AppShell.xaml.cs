@@ -1,4 +1,6 @@
-﻿namespace GeoMemories
+﻿using GeoMemories.Pages;
+
+namespace GeoMemories
 {
     public partial class AppShell : Shell
     {
@@ -7,6 +9,7 @@
             InitializeComponent();
             Routing.RegisterRoute("edittrip", typeof(EditTripPage));
             Routing.RegisterRoute("newtrip", typeof(NewTripPage));
+            Routing.RegisterRoute("mapoverview", typeof(MapOverview));
         }
     }
 }

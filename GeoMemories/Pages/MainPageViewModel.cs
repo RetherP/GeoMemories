@@ -191,5 +191,15 @@ namespace GeoMemories
                 Trips.Add(item);
             }
         }
+        [RelayCommand]
+        public async Task MapOverView()
+        {
+            var param = new ShellNavigationQueryParameters()
+            {
+                {"Trips", Trips },
+                {"Pins", MapPins}
+            };
+            await Shell.Current.GoToAsync("mapoverview", param);
+        }
     }
 }

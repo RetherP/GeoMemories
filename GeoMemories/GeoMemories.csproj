@@ -70,10 +70,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="EditTripPage.xaml">
+	  <MauiXaml Update="Pages\EditTripPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="NewTripPage.xaml">
+	  <MauiXaml Update="Pages\MapOverview.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\NewTripPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

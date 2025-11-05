@@ -64,23 +64,32 @@ namespace GeoMemories
             //just completely change it
             PinLayer.Features = newFeatures;
             PinLayer.DataHasChanged();
+            //Center the map according to the new Pins
+            CenterMap();
         }
         public NewTripViewModel()
         {
             address = new Address();
             client = new HttpClient();
             //You must have a user-agent to call the nominatim API
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("MyMauiApp/1.0 (bvdev001@gmail.com)");
-            /*
-             * These lines creates the map and adds a new OpenStreetMap layer and centers it on the coordinates(which cooordintes need to be converted) and add the PinLayer, where
-             * the pins will be 
-             */
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("MyMauiApp/1.0 (bvdev001@gmail.com)"); 
+            //These lines creates the map and adds a new OpenStreetMap layer  
             Map = new Mapsui.Map();
             Map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer());
-            var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
-            Map.Home = n => n.CenterOnAndZoomTo(new MPoint(center.x, center.y), resolution: 2000, 500, Mapsui.Animations.Easing.CubicOut);
             Map.Layers.Add(PinLayer);
             NewPictureList = new ObservableCollection<Picture>();
+        }
+        private void CenterMap()
+        {
+            //This calculated the current avg of the coordinates and centers the map there
+            var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
+            if (NewMapList != null && NewMapList.Count != 0)
+            {
+                double logn = NewMapList.Average(x => x.Longitude);
+                double latt = NewMapList.Average(x => x.Latitude);
+                center = SphericalMercator.FromLonLat(logn, latt);
+            }
+            Map.Navigator.CenterOnAndZoomTo(new MPoint(center.x, center.y), resolution: 2000, 500, Mapsui.Animations.Easing.CubicOut);
         }
         [RelayCommand]
         public async Task PlacePin()

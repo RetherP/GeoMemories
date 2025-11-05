@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using GeoMemories.Pages;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using System.Globalization;
 
 
 namespace GeoMemories
@@ -24,10 +26,14 @@ namespace GeoMemories
             builder.Services.AddTransient<NewTripPage>();
             builder.Services.AddTransient<EditTripViewModel>();
             builder.Services.AddTransient<EditTripPage>();
+            builder.Services.AddTransient<MapOverviewViewModel>();
+            builder.Services.AddTransient<MapOverview>();
             builder.Services.AddSingleton<IMemoryDB, MemoryDB>();
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

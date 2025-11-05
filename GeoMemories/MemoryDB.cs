@@ -39,7 +39,6 @@ namespace GeoMemories
             var list = await db.Table<MapPin>().ToListAsync();
             var ToRemove = list.FirstOrDefault(x => x.ID == id);
             await db.DeleteAsync(ToRemove);
-            
         }
 
         public async Task DeletePictureByIdAsync(int id)

@@ -91,9 +91,6 @@ namespace GeoMemories
             Map = new Mapsui.Map();
             //Adding a new OpenStreetMap layer to the map
             Map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer());
-            //This creates a point on the map and centers it to it
-            var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
-            Map.Home = n => n.CenterOnAndZoomTo(new MPoint(center.x, center.y), resolution: 2000, 500, Mapsui.Animations.Easing.CubicOut);
             //Adding a plus memorylayer to the map, where the pins will be
             Map.Layers.Add(PinLayer);
             MapPinsDraft = new ObservableCollection<MapPin>();
@@ -101,6 +98,7 @@ namespace GeoMemories
             Address = new Address();
             //Creating a user agent so that it can use the nominatim API
             client.DefaultRequestHeaders.UserAgent.ParseAdd("MyMauiApp/1.0 (bvdev001@gmail.com)");
+            CenterMap();
         }
         public void MapRefesh()
         {
@@ -124,6 +122,20 @@ namespace GeoMemories
             //A full list change beacause you cannot add or delete to a MemoryLayer's feature list just completely change it
             PinLayer.Features = newFeatures;
             PinLayer.DataHasChanged();
+            //Center the map according to the new Pins
+            CenterMap();
+        }
+        //This calculated the current avg of the coordinates and centers the map there
+        private void CenterMap()
+        {
+            var center = SphericalMercator.FromLonLat(19.0402, 47.4979);
+            if (MapPinsDraft!= null && MapPinsDraft.Count != 0)
+            {
+                double logn = MapPinsDraft.Average(x => x.Longitude);
+                double latt = MapPinsDraft.Average(x => x.Latitude);
+                center = SphericalMercator.FromLonLat(logn, latt);
+            }
+            Map.Navigator.CenterOnAndZoomTo(new MPoint(center.x, center.y), resolution: 2000, 500, Mapsui.Animations.Easing.CubicOut);
         }
 
         [RelayCommand]
