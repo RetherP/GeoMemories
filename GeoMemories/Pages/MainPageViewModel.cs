@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using GeoMemories.Repositories;
 using System.Collections.ObjectModel;
 
 namespace GeoMemories
@@ -10,7 +11,10 @@ namespace GeoMemories
     [QueryProperty(nameof(addedPins), "addedpins")]
     public partial class MainPageViewModel : ObservableObject
     {
-        private IMemoryDB db;
+        //private IMemoryDB db;
+        private ITripRepository tripRepository;
+        private IPictureRepository pictureRepository;
+        private IMapRepository mapRepository;
 
         public ObservableCollection<Trip> Trips { get; set; }
         public ObservableCollection<MapPin> MapPins { get; set; }
@@ -38,31 +42,31 @@ namespace GeoMemories
                 foreach (var item in MapRemove.ToList())
                 {
                     MapPins.Remove(item);
-                    await db.DeleteMapPinAsync(item.ID);
+                    await mapRepository.DeleteMapPinAsync(item.ID);
                 }
                 var PictureToRemove = Pictures.Where(x => x.TripID == value.ID);
                 foreach (var item in PictureToRemove.ToList())
                 {
                     Pictures.Remove(item);
-                    await db.DeletePictureByIdAsync(item.ID);
+                    await pictureRepository.DeletePictureByIdAsync(item.ID);
                 }
-                await db.UpdateTripAsync(value);
+                await tripRepository.UpdateTripAsync(value);
                 SelectedTrip = null;
             }
             else
             {
-                await db.CreateTripAsync(value);
+                await tripRepository.CreateTripAsync(value);
             }
             Trips.Add(value);
             foreach (var item in addedPins)
             {
                 MapPins.Add(item);
-                await db.CreateMapPinAsync(item);
+                await mapRepository.CreateMapPinAsync(item);
             }
             foreach (var item in addedPics)
             {
                 Pictures.Add(item);
-                await db.CreatePictureAsync(item);
+                await pictureRepository.CreatePictureAsync(item);
             }
             EditedTrip = null;
             await InitAsync();
@@ -79,7 +83,7 @@ namespace GeoMemories
                     if (item.TripID == SelectedTrip.ID)
                     {
                         MapPins.Remove(item);
-                        await db.DeleteMapPinAsync(item.ID);
+                        await mapRepository.DeleteMapPinAsync(item.ID);
                     }
                 }
                 foreach (var item in Pictures.ToList())
@@ -87,10 +91,10 @@ namespace GeoMemories
                     if (item.ID == SelectedTrip.ID)
                     {
                         Pictures.Remove(item);
-                        await db.DeletePictureByIdAsync(item.ID);
+                        await pictureRepository.DeletePictureByIdAsync(item.ID);
                     }
                 }
-                await db.DeleteTripAsync(SelectedTrip.ID);
+                await tripRepository.DeleteTripAsync(SelectedTrip.ID);
                 Trips.Remove(SelectedTrip);
                 SelectedTrip = null;
             }
@@ -127,7 +131,7 @@ namespace GeoMemories
         {
             SelectedTrip = null;
             int id = -1;
-            var list = await db.GetAllTripAsync();
+            var list = await tripRepository.GetAllTripAsync();
             if (list.Count != 0)
                 id = list.Max(x=> x.ID);
             var param = new ShellNavigationQueryParameters
@@ -143,18 +147,21 @@ namespace GeoMemories
             }
             await Shell.Current.GoToAsync("newtrip", param);
         }
-        public MainPageViewModel(IMemoryDB db)
+        public MainPageViewModel(ITripRepository tripRepository, IPictureRepository pictureRepository, IMapRepository mapRepository)
         {
-            this.db = db;
+
             Trips = new ObservableCollection<Trip>();
             MapPins = new ObservableCollection<MapPin>();
             Pictures = new ObservableCollection<Picture>();
+            this.tripRepository = tripRepository;
+            this.pictureRepository = pictureRepository;
+            this.mapRepository = mapRepository;
         }
         public async Task InitAsync()
         {
-            var tripList = await db.GetAllTripAsync();
-            var mapList = await db.GetAllMapPinsAsync();
-            var picList = await db.GetAllPicturesAsync();
+            var tripList = await tripRepository.GetAllTripAsync();
+            var mapList = await mapRepository.GetAllMapPinsAsync();
+            var picList = await pictureRepository.GetAllPicturesAsync();
             Trips.Clear();
             tripList.ForEach(x => Trips.Add(x));
             MapPins.Clear();
@@ -173,7 +180,7 @@ namespace GeoMemories
             else
             {
                 Trips.Clear();
-                foreach (var item in await db.GetAllTripAsync())
+                foreach (var item in await tripRepository.GetAllTripAsync())
                 {
                     if (item.Name.ToLower().Contains(Search.ToLower()))
                         Trips.Add(item);
@@ -186,7 +193,7 @@ namespace GeoMemories
         public async Task DeleteSearch()
         {
             Trips.Clear();
-            foreach (var item in await db.GetAllTripAsync())
+            foreach (var item in await tripRepository.GetAllTripAsync())
             {
                 Trips.Add(item);
             }

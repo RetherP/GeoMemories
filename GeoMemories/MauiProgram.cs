@@ -1,4 +1,5 @@
 ﻿using GeoMemories.Pages;
+using GeoMemories.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls;
 using SkiaSharp.Views.Maui.Controls.Hosting;
@@ -20,6 +21,10 @@ namespace GeoMemories
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+            builder.Services.AddSingleton<DbContext>();
+            builder.Services.AddSingleton<ITripRepository, TripRepository>();
+            builder.Services.AddSingleton<IPictureRepository, PictureRepository>();
+            builder.Services.AddSingleton<IMapRepository, MapRepository>();
             builder.Services.AddSingleton<MainPageViewModel>();
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddTransient<NewTripViewModel>();
@@ -28,7 +33,7 @@ namespace GeoMemories
             builder.Services.AddTransient<EditTripPage>();
             builder.Services.AddTransient<MapOverviewViewModel>();
             builder.Services.AddTransient<MapOverview>();
-            builder.Services.AddSingleton<IMemoryDB, MemoryDB>();
+            //builder.Services.AddSingleton<IMemoryDB, MemoryDB>();
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
