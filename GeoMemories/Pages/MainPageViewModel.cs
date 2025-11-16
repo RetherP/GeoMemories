@@ -11,7 +11,6 @@ namespace GeoMemories
     [QueryProperty(nameof(addedPins), "addedpins")]
     public partial class MainPageViewModel : ObservableObject
     {
-        //private IMemoryDB db;
         private ITripRepository tripRepository;
         private IPictureRepository pictureRepository;
         private IMapRepository mapRepository;
@@ -91,6 +90,7 @@ namespace GeoMemories
                     if (item.ID == SelectedTrip.ID)
                     {
                         Pictures.Remove(item);
+                        File.Delete(item.FilePath);
                         await pictureRepository.DeletePictureByIdAsync(item.ID);
                     }
                 }

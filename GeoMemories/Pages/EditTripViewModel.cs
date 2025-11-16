@@ -184,6 +184,7 @@ namespace GeoMemories
         public void DeletePic(Picture pic)
         {
             PicturesDraft.Remove(pic);
+            File.Delete(pic.FilePath);
         }
         [RelayCommand]
         public async Task TakePhoto()

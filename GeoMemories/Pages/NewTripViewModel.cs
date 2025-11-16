@@ -99,7 +99,7 @@ namespace GeoMemories
                 WeakReferenceMessenger.Default.Send("Please connect to the internet to use the app.");
                 return;
             }
-            if (!string.IsNullOrWhiteSpace(Address.City) && !string.IsNullOrWhiteSpace(Address.City))
+            if (!string.IsNullOrWhiteSpace(Address.City) && !string.IsNullOrWhiteSpace(Address.Country))
             {
                 //These lines translate the address to a format that can be inserted into the url to querry then querries them to get the coordinates
                 string urlsafeAdd = Uri.EscapeDataString(address.ToString());

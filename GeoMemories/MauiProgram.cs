@@ -33,7 +33,6 @@ namespace GeoMemories
             builder.Services.AddTransient<EditTripPage>();
             builder.Services.AddTransient<MapOverviewViewModel>();
             builder.Services.AddTransient<MapOverview>();
-            //builder.Services.AddSingleton<IMemoryDB, MemoryDB>();
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
